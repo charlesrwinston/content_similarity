@@ -35,19 +35,23 @@ def get_friends_ids(screenName):
 
     return friends
 
-def get_timeline(id, count=200):
+def get_timeline(id=None, screenName=None, count=200):
     """
     Return Tweet timeline from user with specified id
     """
+    print(id)
     result = None
     while not result:
         try:
-            result = twitter.statuses.user_timeline(user_id=id, count=count)
+            result = twitter.statuses.user_timeline(user_id=id, screen_name=screenName, count=count)
             return result
         except TwitterHTTPError as e:
             """
-            Rate limit exceeded
+            Catch Error
             """
             print(e)
-            print('Rate Limit Exceeded. Waiting 15 minutes until the next window.')
-            time.sleep(15 * 60 + 5)
+            if e.message == 'Rate limit exceeded':
+                print('Rate limit exceeded. Waiting 15 minutes until the next window.')
+                time.sleep(15 * 60 + 5)
+            else:
+                return []
