@@ -43,7 +43,10 @@ def get_timeline(id=None, screenName=None, count=200):
     result = None
     while not result:
         try:
-            result = twitter.statuses.user_timeline(user_id=id, screen_name=screenName, count=count)
+            if id:
+                result = twitter.statuses.user_timeline(user_id=id, count=count)
+            elif screenName:
+                result = twitter.statuses.user_timeline(screen_name=screenName, count=count)
             return result
         except TwitterHTTPError as e:
             """
