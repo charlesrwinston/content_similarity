@@ -10,31 +10,34 @@ import sys
 import numpy as np
 from vector_math import cosine_similarity
 
-def get_entities_from_tweets(screenName):
+def get_entities_from_tweets(screenName, random=False, numFriends=181):
     userTweets = json.loads(open('data/{}-tweets.json'.format(screenName), 'r').read())
-    networkTweets = json.loads(open('data/{}-network-tweets.json'.format(screenName), 'r').read())
+    if random:
+        sampleTweets = json.loads(open('data/random-sample-tweets-{}.json'.format(numFriends), 'r').read())
+    else:
+        sampleTweets = json.loads(open('data/{}-network-tweets.json'.format(screenName), 'r').read())
 
     userEntities = {}
-    networkEntities = {}
+    sampleEntities = {}
     entityDimensions = {}
 
     currentDimension = 0
-    for tweet in networkTweets:
+    for tweet in sampleTweets:
         currEntites = tweet['entities']
         for hashtag in currEntites['hashtags']:
-            networkEntities.setdefault(hashtag['text'], 0)
-            networkEntities[hashtag['text']] += 1
+            sampleEntities.setdefault(hashtag['text'], 0)
+            sampleEntities[hashtag['text']] += 1
             dimension = entityDimensions.setdefault(hashtag['text'], currentDimension)
             if dimension == currentDimension:   # entity not found before
                 currentDimension += 1
         for mention in currEntites['user_mentions']:
-            networkEntities.setdefault(mention['screen_name'], 0)
-            networkEntities[mention['screen_name']] += 1
+            sampleEntities.setdefault(mention['screen_name'], 0)
+            sampleEntities[mention['screen_name']] += 1
             dimension = entityDimensions.setdefault(mention['screen_name'], currentDimension)
             if dimension == currentDimension:   # entity not found before
                 currentDimension += 1
 
-    print('Total dimensions after network: {}'.format(currentDimension))
+    print('Total dimensions after sample: {}'.format(currentDimension))
 
     for tweet in userTweets:
         currEntites = tweet['entities']
@@ -54,58 +57,83 @@ def get_entities_from_tweets(screenName):
     print('Total dimensions total: {}'.format(currentDimension))
 
     sortedUserEntities = sorted(userEntities.items(), key=operator.itemgetter(1), reverse=True)
-    sortedNetworkEntities = sorted(networkEntities.items(), key=operator.itemgetter(1), reverse=True)
+    sortedSampleEntities = sorted(sampleEntities.items(), key=operator.itemgetter(1), reverse=True)
     print('Length of user entities: {}'.format(len(sortedUserEntities)))
-    print('Length of network entities: {}'.format(len(sortedNetworkEntities)))
+    print('Length of sample entities: {}'.format(len(sortedSampleEntities)))
 
-    open('data/{}-sorted-user-entities.json'.format(screenName), 'w').write(json.dumps(sortedUserEntities))
-    open('data/{}-sorted-network-entities.json'.format(screenName), 'w').write(json.dumps(sortedNetworkEntities))
-    open('data/{}-user-entities.json'.format(screenName), 'w').write(json.dumps(userEntities))
-    open('data/{}-network-entities.json'.format(screenName), 'w').write(json.dumps(networkEntities))
-    open('data/{}-entity-dimensions.json'.format(screenName), 'w').write(json.dumps(entityDimensions))
+    if random:
+        open('data/{}-avg-sorted-user-entities.json'.format(screenName), 'w').write(json.dumps(sortedUserEntities))
+        open('data/{}-avg-sorted-sample-entities.json'.format(screenName), 'w').write(json.dumps(sortedSampleEntities))
+        open('data/{}-avg-user-entities.json'.format(screenName), 'w').write(json.dumps(userEntities))
+        open('data/{}-avg-sample-entities.json'.format(screenName), 'w').write(json.dumps(sampleEntities))
+        open('data/{}-avg-entity-dimensions.json'.format(screenName), 'w').write(json.dumps(entityDimensions))
+    else:
+        open('data/{}-sorted-user-entities.json'.format(screenName), 'w').write(json.dumps(sortedUserEntities))
+        open('data/{}-sorted-sample-entities.json'.format(screenName), 'w').write(json.dumps(sortedSampleEntities))
+        open('data/{}-user-entities.json'.format(screenName), 'w').write(json.dumps(userEntities))
+        open('data/{}-sample-entities.json'.format(screenName), 'w').write(json.dumps(sampleEntities))
+        open('data/{}-entity-dimensions.json'.format(screenName), 'w').write(json.dumps(entityDimensions))
 
-def build_entity_vectors(screenName):
-    sortedUserEntities = json.loads(open('data/{}-sorted-user-entities.json'.format(screenName), 'r').read())
-    sortedNetworkEntities = json.loads(open('data/{}-sorted-network-entities.json'.format(screenName), 'r').read())
-    userEntities = json.loads(open('data/{}-user-entities.json'.format(screenName), 'r').read())
-    networkEntities = json.loads(open('data/{}-network-entities.json'.format(screenName), 'r').read())
-    entityDimensions = json.loads(open('data/{}-entity-dimensions.json'.format(screenName), 'r').read())
+def build_entity_vectors(screenName, random=False, numFriends=181):
+    if random:
+        sortedUserEntities = json.loads(open('data/{}-avg-sorted-user-entities.json'.format(screenName), 'r').read())
+        sortedSampleEntities = json.loads(open('data/{}-avg-sorted-sample-entities.json'.format(screenName), 'r').read())
+        userEntities = json.loads(open('data/{}-avg-user-entities.json'.format(screenName), 'r').read())
+        sampleEntities = json.loads(open('data/{}-avg-sample-entities.json'.format(screenName), 'r').read())
+        entityDimensions = json.loads(open('data/{}-avg-entity-dimensions.json'.format(screenName), 'r').read())
+    else:
+        sortedUserEntities = json.loads(open('data/{}-sorted-user-entities.json'.format(screenName), 'r').read())
+        sortedSampleEntities = json.loads(open('data/{}-sorted-sample-entities.json'.format(screenName), 'r').read())
+        userEntities = json.loads(open('data/{}-user-entities.json'.format(screenName), 'r').read())
+        sampleEntities = json.loads(open('data/{}-sample-entities.json'.format(screenName), 'r').read())
+        entityDimensions = json.loads(open('data/{}-entity-dimensions.json'.format(screenName), 'r').read())
 
     userVector = np.zeros(len(entityDimensions), dtype=int)
-    networkVector = np.zeros(len(entityDimensions), dtype=int)
+    sampleVector = np.zeros(len(entityDimensions), dtype=int)
 
     for pair in sortedUserEntities:
         entity = pair[0]
         count = pair[1]
         np.put(userVector, entityDimensions[entity], count)
 
-    for pair in sortedNetworkEntities:
+    for pair in sortedSampleEntities:
         entity = pair[0]
         count = pair[1]
-        np.put(networkVector, entityDimensions[entity], count)
+        np.put(sampleVector, entityDimensions[entity], count)
 
-    np.save('{}-user-vector'.format(screenName), userVector)
-    np.save('{}-network-vector'.format(screenName), networkVector)
+    if random:
+        np.save('data/{}-avg-user-vector'.format(screenName), userVector)
+        np.save('data/{}-avg-sample-vector'.format(screenName), sampleVector)
+    else:
+        np.save('data/{}-user-vector'.format(screenName), userVector)
+        np.save('data/{}-sample-vector'.format(screenName), sampleVector)
 
-    similarity = cosine_similarity(userVector, networkVector)
+    similarity = cosine_similarity(userVector, sampleVector)
     similarityObject = {
         'similarity': similarity,
         'total_dimensions': len(entityDimensions)
     }
-    open('{}-similarity.json'.format(screenName), 'w').write(json.dumps(similarityObject))
-
-
+    if random:
+        open('data/{}-avg-similarity.json'.format(screenName), 'w').write(json.dumps(similarityObject))
+    else:
+        open('data/{}-similarity.json'.format(screenName), 'w').write(json.dumps(similarityObject))
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         if sys.argv[1] == 'get_entities_from_tweets':
             if len(sys.argv) > 2:
-                get_entities_from_tweets(sys.argv[2])
+                if len(sys.argv) > 3:
+                    get_entities_from_tweets(sys.argv[2], random=sys.argv[3])
+                else:
+                    get_entities_from_tweets(sys.argv[2])
             else:
                 raise Exception('No screen name provied.')
         elif sys.argv[1] == 'build_entity_vectors':
             if len(sys.argv) > 2:
-                build_entity_vectors(sys.argv[2])
+                if len(sys.argv) > 3:
+                    build_entity_vectors(sys.argv[2], random=sys.argv[3])
+                else:
+                    build_entity_vectors(sys.argv[2])
             else:
                 raise Exception('No screen name provied.')
         else:

@@ -9,6 +9,7 @@ Methods for building our data from twitter:
 import json
 from twitter_methods import get_friends_ids, get_timeline
 import sys
+import random
 
 # List of screen names used as sources
 sourceScreenNames = [
@@ -91,6 +92,42 @@ def get_user_tweets(screenName):
     print(len(tweets))
     open('data/{}-tweets.json'.format(screenName), 'w').write((json.dumps(tweets)))
 
+def get_random_sample_tweets(numUsers):
+    """
+    Generate a list of random user ids, fetch tweets
+    from each one.
+    """
+    userIDS = json.loads(open('data/random-users-{}.json'.format(numUsers), 'r').read())
+    allTweets = []
+    for id in userIDS:
+        try:
+            timeline = get_timeline(id=id)
+            print('Retrieved {} Tweets from {}\'s timeline.'.format(len(timeline), id))
+            tweets = [
+                {
+                    key: tweet[key] for key in ['created_at',
+                                                'id',
+                                                'id_str',
+                                                'text',
+                                                'truncated',
+                                                'entities',
+                                                'retweet_count',
+                                                'favorite_count',
+                                                'user']
+                }
+                for tweet in timeline
+            ]
+            print(len(tweets))
+            allTweets.extend(tweets)
+
+        except TwitterHTTPError as e:
+            print(e)
+            print('Moving on')
+
+    print(len(allTweets))
+    open('data/random-sample-tweets-{}.json'.format(181), 'w').write((json.dumps(allTweets)))
+
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -106,6 +143,16 @@ if __name__ == '__main__':
                 get_user_tweets(sys.argv[2])
             else:
                 raise Exception('No screen name provied.')
+        elif sys.argv[1] == 'get_random_sample_tweets':
+            if len(sys.argv) > 2:
+                get_random_sample_tweets(sys.argv[2])
+            else:
+                get_random_sample_tweets(181)
+        elif sys.argv[1] == 'get_random_sample_users':
+            if len(sys.argv) > 2:
+                get_random_sample_users(sys.argv[2])
+            else:
+                get_random_sample_users(180)
         else:
             raise Exception('Invalid instruction.')
     else:
