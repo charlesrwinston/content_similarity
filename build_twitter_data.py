@@ -11,32 +11,15 @@ from twitter_methods import get_friends_ids, get_timeline
 import sys
 import random
 
-# List of screen names used as sources
-sourceScreenNames = [
-    'realDonaldTrump',
 
-    'katyperry',
-    'rihanna',
-    'Beyonce',
-
-    'KingJames',
-    'StephenCurry30',
-    'KDTrey5',
-
-    'jaketapper',
-    'megynkelly',
-    'maddow',
-    'NateSilver538'
-]
-
-def build_friends_list():
+def build_friends_list(screenName):
     """
     For each user used as a source, compile a list
     of their friends and store in a json file.
     """
-    for screenName in sourceScreenNames:
-        friendsList = get_friends_ids(screenName)
-        open('data/{}-friends.json'.format(screenName), 'w').write((json.dumps(friendsList)))
+    friendsList = get_friends_ids(screenName)
+    open('data/{}-friends.json'.format(screenName), 'w').write((json.dumps(friendsList)))
+    return len(friendsList)
 
 def get_network_tweets(screenName):
     """

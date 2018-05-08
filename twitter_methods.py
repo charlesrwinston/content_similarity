@@ -79,4 +79,4 @@ def get_random_sample_users(numUsers):
                 count += 1
         else:
             print('No user')
-    open('data/random-users-181.json', 'w').write(json.dumps(list(users)))
+    open('data/random-users-{}.json'.format(numUsers), 'w').write(json.dumps(list(users)))
