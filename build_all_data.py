@@ -22,15 +22,17 @@ sourceScreenNames = [
 ]
 
 def main(screenName):
-    numFollowers = build_friends_list(screenName)
-    get_user_tweets(screenName)
-    get_network_tweets(screenName)
-    get_random_sample_users(numFollowers)
-    get_random_sample_tweets(numFollowers)
-    get_entities_from_tweets(screenName, random=False)
-    build_entity_vectors(screenName, random=False)
+    #numFollowers = build_friends_list(screenName)
+    #get_user_tweets(screenName)
+    #get_network_tweets(screenName)
+    #get_random_sample_users(numFollowers)
+    #get_random_sample_tweets(numFollowers)
+    #get_entities_from_tweets(screenName, random=False)
+    #build_entity_vectors(screenName, random=False)
     get_entities_from_tweets(screenName, random=True)
     build_entity_vectors(screenName, random=True)
+    #get_entities_from_tweets(screenName, random=False, noScreenName=True)
+    #build_entity_vectors(screenName, random=True, noScreenName=True)
 
 
 if __name__ == '__main__':

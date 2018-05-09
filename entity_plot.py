@@ -75,7 +75,7 @@ def barplot(ax, dpoints):
     width = (1 - space) / (len(conditions))
 
     # Create a set of bars at each position
-    colors = ['sandybrown', 'steelblue']
+    colors = ['#C32AA3', '#4c68d7']
     for i,cond in enumerate(conditions):
         indeces = range(1, len(categories)+1)
         vals = dpoints[dpoints[:,0] == cond][:,2].astype(np.float)
