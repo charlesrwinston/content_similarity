@@ -11,7 +11,8 @@ screenNames = [
     'KingJames',
     'realDonaldTrump',
     'tylerthecreator',
-    'kanyewest'
+    #'kanyewest',
+    'iamcardib'
 ]
 dpoints = []
 filename = 'similarity-chart.png'
@@ -24,20 +25,6 @@ for screenName in screenNames:
     dpoints.append(['Network', screenName, networkSimilarity])
     dpoints.append(['Average', screenName, avgSimilarity])
 
-
-
-
-'''
-dpoints = np.array([['rosetta', '1mfq', 9.97],
-           ['rosetta', '1gid', 27.31],
-           ['rosetta', '1y26', 5.77],
-           ['rnacomposer', '1mfq', 5.55],
-           ['rnacomposer', '1gid', 37.74],
-           ['rnacomposer', '1y26', 5.77],
-           ['random', '1mfq', 10.32],
-           ['random', '1gid', 31.46],
-           ['random', '1y26', 18.16]])
-'''
 dpoints = np.array(dpoints)
 
 fig = plt.figure()
@@ -72,7 +59,7 @@ def barplot(ax, dpoints):
     width = (1 - space) / (len(conditions))
 
     # Create a set of bars at each position
-    colors = ['sandybrown', 'steelblue']
+    colors = ['red', 'blue']
     for i,cond in enumerate(conditions):
         indeces = range(1, len(categories)+1)
         vals = dpoints[dpoints[:,0] == cond][:,2].astype(np.float)
@@ -87,8 +74,8 @@ def barplot(ax, dpoints):
     plt.setp(plt.xticks()[1], rotation=90)
 
     # Add the axis labels
-    ax.set_ylabel("Percent of Mentions")
-    ax.set_xlabel("Entities Mentioned")
+    ax.set_ylabel("Cosine Similarity")
+    ax.set_xlabel("Users")
 
     # Add a legend
     handles, labels = ax.get_legend_handles_labels()

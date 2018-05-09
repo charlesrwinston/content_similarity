@@ -25,8 +25,8 @@ if sys.argv[2] == 'user':
         ent = item[0]
         count = item[1]
         sampleCount = sampleEntities[ent] if ent in sampleEntities else 0
-        userPercent = count / float(totalUserMentions)
-        samplePercent = sampleCount / float(totalSampleMentions)
+        userPercent = 100 * count / float(totalUserMentions)
+        samplePercent = 100 * sampleCount / float(totalSampleMentions)
         dpoints.append([screenName, ent, userPercent])
         dpoints.append(['Network', ent, samplePercent])
 elif sys.argv[2] == 'network':
@@ -36,24 +36,11 @@ elif sys.argv[2] == 'network':
         ent = item[0]
         count = item[1]
         userCount = userEntities[ent] if ent in userEntities else 0
-        userPercent = userCount / float(totalUserMentions)
-        samplePercent = count / float(totalSampleMentions)
+        userPercent = 100 * userCount / float(totalUserMentions)
+        samplePercent = 100 * count / float(totalSampleMentions)
         dpoints.append([screenName, ent, userPercent])
         dpoints.append(['Network', ent, samplePercent])
 
-
-
-'''
-dpoints = np.array([['rosetta', '1mfq', 9.97],
-           ['rosetta', '1gid', 27.31],
-           ['rosetta', '1y26', 5.77],
-           ['rnacomposer', '1mfq', 5.55],
-           ['rnacomposer', '1gid', 37.74],
-           ['rnacomposer', '1y26', 5.77],
-           ['random', '1mfq', 10.32],
-           ['random', '1gid', 31.46],
-           ['random', '1y26', 18.16]])
-'''
 dpoints = np.array(dpoints)
 
 fig = plt.figure()
