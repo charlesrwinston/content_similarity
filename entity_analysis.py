@@ -51,11 +51,14 @@ def get_entities_from_tweets(screenName, random=False, numFriends=181, noScreenN
             if dimension == currentDimension:   # entity not found before
                 currentDimension += 1
         for mention in currEntites['user_mentions']:
-            userEntities.setdefault(mention['screen_name'], 0)
-            userEntities[mention['screen_name']] += 1
-            dimension = entityDimensions.setdefault(mention['screen_name'], currentDimension)
-            if dimension == currentDimension:   # entity not found before
-                currentDimension += 1
+            if noScreenName and mention['screen_name'] == screenName:
+                pass
+            else:
+                userEntities.setdefault(mention['screen_name'], 0)
+                userEntities[mention['screen_name']] += 1
+                dimension = entityDimensions.setdefault(mention['screen_name'], currentDimension)
+                if dimension == currentDimension:   # entity not found before
+                    currentDimension += 1
 
     print('Total dimensions total: {}'.format(currentDimension))
 
@@ -130,6 +133,8 @@ def build_entity_vectors(screenName, random=False, numFriends=181, noScreenName=
     }
     if random:
         open('data/{}-avg-similarity.json'.format(screenName), 'w').write(json.dumps(similarityObject))
+    elif noScreenName:
+        open('data/{}-no-screen-name-similarity.json'.format(screenName), 'w').write(json.dumps(similarityObject))
     else:
         open('data/{}-similarity.json'.format(screenName), 'w').write(json.dumps(similarityObject))
 
