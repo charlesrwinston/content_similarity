@@ -15,15 +15,21 @@ screenNames = [
     'iamcardib'
 ]
 dpoints = []
-filename = 'similarity-chart.png'
-title = 'Similarity Comparison Network to Average'
+if sys.argv[1] == 'avg':
+    filename = 'similarity-avg-chart.png'
+    title = 'Similarity Comparison Network to Average'
+else:
+    filename = 'similarity-chart.png'
+    title = 'Similarity Comparison'
 for screenName in screenNames:
     networkSimilarityObject = json.loads(open('data/{}-similarity.json'.format(screenName), 'r').read())
-    avgSimilarityObject = json.loads(open('data/{}-avg-similarity.json'.format(screenName), 'r').read())
     networkSimilarity = networkSimilarityObject['similarity']
-    avgSimilarity = avgSimilarityObject['similarity']
     dpoints.append(['Network', screenName, networkSimilarity])
-    dpoints.append(['Average', screenName, avgSimilarity])
+    if sys.argv[1] == 'avg':
+        avgSimilarityObject = json.loads(open('data/{}-avg-similarity.json'.format(screenName), 'r').read())
+        avgSimilarity = avgSimilarityObject['similarity']
+        dpoints.append(['Average', screenName, avgSimilarity])
+
 
 dpoints = np.array(dpoints)
 
