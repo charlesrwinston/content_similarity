@@ -11,6 +11,10 @@ import numpy as np
 from vector_math import cosine_similarity
 
 def get_entities_from_tweets(screenName, random=False, numFriends=181, noScreenName=False, noUserMentions=False):
+    """
+    Get entities from user and sample (network or random).
+    Stores entity information in json files.
+    """
     userTweets = json.loads(open('data/{}-tweets.json'.format(screenName), 'r').read())
     if random:
         sampleTweets = json.loads(open('data/random-sample-tweets-{}.json'.format(numFriends), 'r').read())
@@ -87,6 +91,10 @@ def get_entities_from_tweets(screenName, random=False, numFriends=181, noScreenN
         open('data/{}-entity-dimensions.json'.format(screenName), 'w').write(json.dumps(entityDimensions))
 
 def build_entity_vectors(screenName, random=False, numFriends=181, noScreenName=False, noUserMentions=False):
+    """
+    Loads entity information from json files, computes the entity vectors,
+    and computes the cosine similarity.
+    """
     if random:
         sortedUserEntities = json.loads(open('data/{}-avg-sorted-user-entities.json'.format(screenName), 'r').read())
         sortedSampleEntities = json.loads(open('data/{}-avg-sorted-sample-entities.json'.format(screenName), 'r').read())

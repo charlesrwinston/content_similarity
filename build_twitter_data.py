@@ -26,7 +26,6 @@ def get_network_tweets(screenName):
     For given user, get the timeline of each of their freinds
     and store in a json file.
     """
-    # TODO: figure out why there's an error every time
     friendsIDS = json.loads(open('data/{}-friends.json'.format(screenName), 'r').read())
     allTweets = []
     for id in friendsIDS:

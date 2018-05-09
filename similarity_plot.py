@@ -1,3 +1,10 @@
+"""
+similarity_plot.py
+
+Module for plotting the cosine similarity of users to their networks
+and also to a random sample of users.
+"""
+
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import operator as o
@@ -11,9 +18,9 @@ screenNames = [
     'KingJames',
     'realDonaldTrump',
     'tylerthecreator',
-    #'kanyewest',
     'iamcardib'
 ]
+
 dpoints = []
 if sys.argv[1] == 'avg':
     filename = 'similarity-avg-chart.png'
@@ -91,4 +98,3 @@ barplot(ax, dpoints)
 plt.title(title)
 plt.gcf().subplots_adjust(bottom=0.35)
 plt.savefig('charts/{}'.format(filename))
-#plt.show()

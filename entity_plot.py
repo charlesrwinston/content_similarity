@@ -1,3 +1,10 @@
+"""
+entity_plot.py
+
+Module for plotting the top entities of a user and their network.
+"""
+
+
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import operator as o
@@ -101,4 +108,3 @@ barplot(ax, dpoints)
 plt.title(title)
 plt.gcf().subplots_adjust(bottom=0.35)
 plt.savefig('charts/{}'.format(filename))
-#plt.show()
